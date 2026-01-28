@@ -12,8 +12,7 @@ from typing import TYPE_CHECKING, Any
 from websockets.asyncio.server import serve
 
 if TYPE_CHECKING:
-    from websockets.asyncio.server import Server
-    from websockets.asyncio.server import ServerConnection
+    from websockets.asyncio.server import Server, ServerConnection
 
 
 class FakePhoenixServer:
@@ -74,6 +73,9 @@ class FakePhoenixServer:
 
         Phoenix message format (array): [join_ref, msg_ref, topic, event, payload]
         """
+        if self.client_websocket is None:
+            return  # No client connected
+
         if not isinstance(data, list) or len(data) != 5:
             return  # Invalid message format
 

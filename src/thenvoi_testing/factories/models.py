@@ -178,9 +178,7 @@ class MockDataFactory:
         return response
 
     @staticmethod
-    def list_response(
-        items: list[Any], meta: dict[str, Any] | None = None
-    ) -> Mock:
+    def list_response(items: list[Any], meta: dict[str, Any] | None = None) -> Mock:
         """Create a mock API response for list endpoints.
 
         Creates a list response that can be serialized by serialize_response().

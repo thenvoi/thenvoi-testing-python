@@ -22,7 +22,9 @@ __all__ = [
 
 # FakePhoenixServer is conditionally imported to avoid websockets dependency
 try:
-    from thenvoi_testing.fakes.phoenix_server import FakePhoenixServer
+    from thenvoi_testing.fakes.phoenix_server import (  # noqa: F401
+        FakePhoenixServer,
+    )
 
     __all__.append("FakePhoenixServer")
 except ImportError:

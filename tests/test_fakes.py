@@ -110,16 +110,12 @@ class TestFakeAgentTools:
         """get_anthropic_tool_schemas() should return empty list."""
         assert tools.get_anthropic_tool_schemas() == []
 
-    def test_get_openai_tool_schemas_returns_empty(
-        self, tools: FakeAgentTools
-    ) -> None:
+    def test_get_openai_tool_schemas_returns_empty(self, tools: FakeAgentTools) -> None:
         """get_openai_tool_schemas() should return empty list."""
         assert tools.get_openai_tool_schemas() == []
 
     @pytest.mark.asyncio
-    async def test_execute_tool_call_tracks_calls(
-        self, tools: FakeAgentTools
-    ) -> None:
+    async def test_execute_tool_call_tracks_calls(self, tools: FakeAgentTools) -> None:
         """execute_tool_call() should track all tool calls."""
         result = await tools.execute_tool_call(
             "get_weather", {"location": "New York", "unit": "celsius"}

@@ -2,9 +2,14 @@
 
 from __future__ import annotations
 
-import pytest
+from datetime import UTC
 
-from thenvoi_testing.factories import factory, make_pydantic_mock, make_timestamp, make_uuid
+from thenvoi_testing.factories import (
+    factory,
+    make_pydantic_mock,
+    make_timestamp,
+    make_uuid,
+)
 
 
 class TestMakePydanticMock:
@@ -56,11 +61,11 @@ class TestHelpers:
 
     def test_make_timestamp_returns_datetime(self) -> None:
         """make_timestamp() should return a UTC datetime."""
-        from datetime import datetime, timezone
+        from datetime import datetime
 
         timestamp = make_timestamp()
         assert isinstance(timestamp, datetime)
-        assert timestamp.tzinfo == timezone.utc
+        assert timestamp.tzinfo == UTC
 
 
 class TestMockDataFactory:

@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import uuid
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from unittest.mock import Mock
 
 
@@ -14,7 +14,7 @@ def make_uuid() -> str:
 
 def make_timestamp() -> datetime:
     """Generate current UTC timestamp."""
-    return datetime.now(timezone.utc)
+    return datetime.now(UTC)
 
 
 def make_pydantic_mock(**attrs: object) -> Mock:

@@ -21,7 +21,7 @@ Usage:
 from __future__ import annotations
 
 import os
-from typing import Callable
+from collections.abc import Callable
 
 import pytest
 
@@ -105,7 +105,9 @@ skip_in_ci = pytest.mark.skipif(
 )
 
 
-def pytest_ignore_collect_in_ci(collection_path: str, folder: str = "integration") -> bool:
+def pytest_ignore_collect_in_ci(
+    collection_path: str, folder: str = "integration"
+) -> bool:
     """Helper for pytest_ignore_collect to skip folders in CI.
 
     Add this to your conftest.py:

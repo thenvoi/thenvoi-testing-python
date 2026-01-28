@@ -25,8 +25,8 @@ from unittest.mock import AsyncMock
 
 import pytest
 
-from thenvoi_testing.fakes import FakeAgentTools
 from thenvoi_testing.factories import factory as _factory
+from thenvoi_testing.fakes import FakeAgentTools
 
 
 @pytest.fixture

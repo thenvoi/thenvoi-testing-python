@@ -66,9 +66,7 @@ class FakeAgentTools:
         self.events_sent.append(event)
         return event
 
-    async def add_participant(
-        self, name: str, role: str = "member"
-    ) -> dict[str, Any]:
+    async def add_participant(self, name: str, role: str = "member") -> dict[str, Any]:
         """Add a participant and track it."""
         participant = {"id": f"p-{name}", "name": name, "role": role}
         self.participants_added.append(participant)
@@ -84,9 +82,7 @@ class FakeAgentTools:
         """Get participants (returns empty list by default)."""
         return []
 
-    async def lookup_peers(
-        self, page: int = 1, page_size: int = 50
-    ) -> dict[str, Any]:
+    async def lookup_peers(self, page: int = 1, page_size: int = 50) -> dict[str, Any]:
         """Lookup peers (returns empty result by default)."""
         return {
             "peers": [],
@@ -109,9 +105,7 @@ class FakeAgentTools:
         """Get OpenAI-formatted tool schemas."""
         return []
 
-    async def execute_tool_call(
-        self, tool_name: str, arguments: dict[str, Any]
-    ) -> Any:
+    async def execute_tool_call(self, tool_name: str, arguments: dict[str, Any]) -> Any:
         """Execute a tool call and track it."""
         call = {"tool_name": tool_name, "arguments": arguments}
         self.tool_calls.append(call)

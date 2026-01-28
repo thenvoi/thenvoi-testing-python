@@ -4,8 +4,8 @@ from __future__ import annotations
 
 import pytest
 
-from thenvoi_testing.fakes import FakeAgentTools
 from thenvoi_testing.factories import MockDataFactory
+from thenvoi_testing.fakes import FakeAgentTools
 
 
 class TestFakeAgentToolsFixture:
