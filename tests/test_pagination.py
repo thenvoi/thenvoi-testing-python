@@ -107,7 +107,9 @@ class TestFindItemInPages:
             return make_paginated_response(items, page=1, total_pages=1)
 
         ctx = MockContext()
-        result = find_item_in_pages(ctx, list_func, lambda item: item["name"] == "Target")
+        result = find_item_in_pages(
+            ctx, list_func, lambda item: item["name"] == "Target"
+        )
 
         assert result is not None
         assert result["id"] == "2"
@@ -123,7 +125,9 @@ class TestFindItemInPages:
             return make_paginated_response(pages[page], page=page, total_pages=2)
 
         ctx = MockContext()
-        result = find_item_in_pages(ctx, list_func, lambda item: item["name"] == "Target")
+        result = find_item_in_pages(
+            ctx, list_func, lambda item: item["name"] == "Target"
+        )
 
         assert result is not None
         assert result["id"] == "2"
@@ -152,7 +156,9 @@ class TestFindItemInPages:
                 return make_paginated_response(
                     [{"id": "target"}], page=1, total_pages=10
                 )
-            return make_paginated_response([{"id": f"other-{page}"}], page=page, total_pages=10)
+            return make_paginated_response(
+                [{"id": f"other-{page}"}], page=page, total_pages=10
+            )
 
         ctx = MockContext()
         result = find_item_in_pages(ctx, list_func, lambda item: item["id"] == "target")
