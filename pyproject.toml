@@ -24,7 +24,7 @@ dependencies = [
 
 [project.optional-dependencies]
 # For repos using thenvoi_rest client (integration tests)
-rest = ["thenvoi-client-rest @ git+https://github.com/thenvoi/fern-python-sdk.git"]
+rest = ["thenvoi-client-rest==0.0.2"]
 # For repos using WebSocket testing
 websocket = ["websockets>=12.0"]
 # Full installation
@@ -46,9 +46,6 @@ Repository = "https://github.com/thenvoi/thenvoi-testing-python"
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
-
-[tool.hatch.metadata]
-allow-direct-references = true
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/thenvoi_testing"]

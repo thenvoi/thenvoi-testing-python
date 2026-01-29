@@ -457,13 +457,17 @@ wheels = [
 
 [[package]]
 name = "thenvoi-client-rest"
-version = "0.0.3"
-source = { git = "https://github.com/thenvoi/fern-python-sdk.git#7ded18c073aca2348df4374bf0f741d010745519" }
+version = "0.0.2"
+source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "httpx" },
     { name = "pydantic" },
     { name = "pydantic-core" },
     { name = "typing-extensions" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/6e/92/5f01c144cb93f2da79c05901c855f5de5e6b4e81b45ac376cc141228e870/thenvoi_client_rest-0.0.2.tar.gz", hash = "sha256:746208f5589125f4f5547289fab709b95346899841214817910479350ca686d3", size = 63061, upload-time = "2025-12-29T09:15:52.928Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/f6/03/fc740e1fefec2c7d3897237c1d7155c5128a5cf776ef41b31e32a65cf2a1/thenvoi_client_rest-0.0.2-py3-none-any.whl", hash = "sha256:f693a6c9625f41b7934091da0287d19a0e9d9258501cdbb4a6b3bc41c0f64acc", size = 120085, upload-time = "2025-12-29T09:15:51.861Z" },
 ]
 
 [[package]]
@@ -505,7 +509,7 @@ requires-dist = [
     { name = "pytest", specifier = ">=7.0.0" },
     { name = "pytest-asyncio", specifier = ">=0.21.0" },
     { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.1.0" },
-    { name = "thenvoi-client-rest", marker = "extra == 'rest'", git = "https://github.com/thenvoi/fern-python-sdk.git" },
+    { name = "thenvoi-client-rest", marker = "extra == 'rest'", specifier = "==0.0.2" },
     { name = "thenvoi-testing-python", extras = ["full"], marker = "extra == 'dev'" },
     { name = "thenvoi-testing-python", extras = ["rest", "websocket"], marker = "extra == 'full'" },
     { name = "websockets", marker = "extra == 'websocket'", specifier = ">=12.0" },
