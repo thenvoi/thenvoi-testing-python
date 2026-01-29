@@ -8,12 +8,15 @@ Core fixtures (always available):
 - mock_websocket: AsyncMock WebSocket client for subscription tests
 - factory: MockDataFactory instance for creating test data
 
-API client fixtures (always available):
+Mock API client fixtures (for unit tests):
 - mock_agent_api: MagicMock of agent_api namespace
 - mock_human_api: MagicMock of human_api namespace
 - mock_api_client: AsyncMock with both APIs attached
 
-Sample message fixtures (require thenvoi-testing-python[rest]):
+Real API client fixtures (for integration tests):
+- api_client: Real RestClient (requires thenvoi-client-rest, returns None if no API key)
+
+Sample message fixtures:
 - sample_room_message: MessageCreatedPayload from a user
 - sample_agent_message: MessageCreatedPayload from an agent
 
@@ -31,6 +34,11 @@ Usage:
         mock_agent_api.get_agent_me.return_value = factory.response(...)
         await some_function(mock_api_client)
         mock_agent_api.get_agent_me.assert_called_once()
+
+    def test_integration(api_client):
+        if api_client is None:
+            pytest.skip("API key not configured")
+        response = api_client.agent_api.get_agent_me()
 """
 
 from __future__ import annotations
@@ -45,6 +53,7 @@ from thenvoi_testing.fakes import FakeAgentTools
 
 # Import API client fixtures - they will be auto-registered by pytest
 from thenvoi_testing.fixtures.api_clients import (  # noqa: F401
+    api_client,
     mock_agent_api,
     mock_api_client,
     mock_human_api,

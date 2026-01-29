@@ -1,21 +1,26 @@
-"""Shared API client mock fixtures.
+"""Shared API client fixtures for testing.
 
-Provides pre-configured mock fixtures for testing code that uses
-the Thenvoi REST API client.
+Provides pre-configured mock fixtures for unit testing and real client
+fixtures for integration testing.
 
-Fixtures:
+Mock fixtures (for unit tests):
 - mock_agent_api: MagicMock of the agent_api namespace
 - mock_human_api: MagicMock of the human_api namespace
 - mock_api_client: AsyncMock with both APIs attached
+
+Real client fixtures (for integration tests):
+- api_client: Real RestClient instance (requires thenvoi-client-rest)
 """
 
 from __future__ import annotations
 
+from typing import Any
 from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
 from thenvoi_testing.factories import factory
+from thenvoi_testing.settings import ThenvoiTestSettings
 
 
 @pytest.fixture
@@ -164,3 +169,57 @@ def mock_api_client(mock_agent_api: MagicMock, mock_human_api: MagicMock) -> Asy
     client.agent_api = mock_agent_api
     client.human_api = mock_human_api
     return client
+
+
+# =============================================================================
+# Real Client Fixtures (for integration tests)
+# =============================================================================
+
+
+@pytest.fixture(scope="session")
+def api_client() -> Any:
+    """Create a real RestClient for integration tests.
+
+    Requires thenvoi-client-rest to be installed (via the 'rest' extra).
+    Returns None if THENVOI_API_KEY is not set, allowing tests to
+    decide whether to skip.
+
+    Uses ThenvoiTestSettings to load configuration from environment
+    variables or .env.test file.
+
+    Example:
+        def test_integration(api_client):
+            if api_client is None:
+                pytest.skip("API key not configured")
+
+            response = api_client.agent_api.get_agent_me()
+            assert response.data.id is not None
+
+        # Or use with a marker
+        @pytest.mark.skipif(
+            not os.environ.get("THENVOI_API_KEY"),
+            reason="API key required"
+        )
+        def test_with_api(api_client):
+            ...
+
+    Returns:
+        RestClient instance or None if API key is not set
+    """
+    settings = ThenvoiTestSettings()
+
+    if not settings.has_api_key:
+        return None
+
+    try:
+        from thenvoi_rest import RestClient
+    except ImportError as err:
+        raise ImportError(
+            "thenvoi-client-rest is required for api_client fixture. "
+            "Install with: pip install thenvoi-testing-python[rest]"
+        ) from err
+
+    return RestClient(
+        api_key=settings.thenvoi_api_key,
+        base_url=settings.thenvoi_base_url,
+    )
