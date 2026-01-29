@@ -1,6 +1,6 @@
 [project]
 name = "thenvoi-testing-python"
-version = "0.1.0"
+version = "0.1.1"
 description = "Shared Python testing utilities for Thenvoi repositories - fixtures, factories, and fakes"
 readme = "README.md"
 license = "MIT"
