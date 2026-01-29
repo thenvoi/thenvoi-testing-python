@@ -26,7 +26,7 @@ Usage:
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, Literal
 
 from thenvoi_testing.streaming import (
     MessageCreatedPayload,
@@ -49,40 +49,50 @@ from thenvoi_testing.streaming import (
 class MessageEvent:
     """Wrapper for message created events."""
 
-    room_id: str
-    payload: MessageCreatedPayload
+    type: Literal["message_created"] = "message_created"
+    room_id: str | None = None
+    payload: MessageCreatedPayload | None = None
+    raw: dict[str, Any] | None = None
 
 
 @dataclass
 class RoomAddedEvent:
     """Wrapper for room added events."""
 
-    room_id: str
-    payload: RoomAddedPayload
+    type: Literal["room_added"] = "room_added"
+    room_id: str | None = None
+    payload: RoomAddedPayload | None = None
+    raw: dict[str, Any] | None = None
 
 
 @dataclass
 class RoomRemovedEvent:
     """Wrapper for room removed events."""
 
-    room_id: str
-    payload: RoomRemovedPayload
+    type: Literal["room_removed"] = "room_removed"
+    room_id: str | None = None
+    payload: RoomRemovedPayload | None = None
+    raw: dict[str, Any] | None = None
 
 
 @dataclass
 class ParticipantAddedEvent:
     """Wrapper for participant added events."""
 
-    room_id: str
-    payload: ParticipantAddedPayload
+    type: Literal["participant_added"] = "participant_added"
+    room_id: str | None = None
+    payload: ParticipantAddedPayload | None = None
+    raw: dict[str, Any] | None = None
 
 
 @dataclass
 class ParticipantRemovedEvent:
     """Wrapper for participant removed events."""
 
-    room_id: str
-    payload: ParticipantRemovedPayload
+    type: Literal["participant_removed"] = "participant_removed"
+    room_id: str | None = None
+    payload: ParticipantRemovedPayload | None = None
+    raw: dict[str, Any] | None = None
 
 
 # =============================================================================
