@@ -6,10 +6,12 @@ Shared Python testing utilities for Thenvoi repositories. Provides fixtures, fac
 
 ```
 src/thenvoi_testing/
-├── factories/      # Mock data factories (MockDataFactory, examples)
+├── factories/      # Mock data factories (MockDataFactory, events)
 ├── fakes/          # Fake implementations (FakeAgentTools, FakePhoenixServer)
 ├── fixtures/       # Pytest plugin with auto-registered fixtures
+├── streaming/      # WebSocket payload types (MessageCreatedPayload, etc.)
 ├── markers.py      # Skip marker utilities (skip_without_env, skip_in_ci)
+├── pagination.py   # Pagination helpers for integration tests
 └── settings.py     # Pydantic BaseSettings for integration tests
 ```
 
@@ -17,10 +19,12 @@ src/thenvoi_testing/
 
 ```
 tests/
+├── test_events.py      # Event factory tests
 ├── test_factories.py   # MockDataFactory tests
 ├── test_fakes.py       # FakeAgentTools tests
 ├── test_fixtures.py    # Pytest plugin tests
 ├── test_markers.py     # Skip marker tests
+├── test_pagination.py  # Pagination helper tests
 ├── test_settings.py    # Settings tests
 └── conftest.py         # Test configuration
 ```

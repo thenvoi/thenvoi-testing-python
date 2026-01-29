@@ -147,6 +147,56 @@ def pytest_ignore_collect(collection_path):
     return pytest_ignore_collect_in_ci(str(collection_path), "integration")
 ```
 
+### Event Factories
+
+Create WebSocket event objects for testing handlers:
+
+```python
+from thenvoi_testing.factories.events import (
+    make_message_event,
+    make_room_added_event,
+    make_participant_added_event,
+)
+
+# Create a message event with defaults
+event = make_message_event()
+assert event.type == "message_created"
+assert event.payload.sender_type == "User"
+
+# Create with custom values
+event = make_message_event(
+    room_id="room-123",
+    content="Hello!",
+    sender_id="user-456",
+    sender_type="Agent",
+)
+```
+
+### Pagination Helpers
+
+Utilities for integration tests against paginated APIs:
+
+```python
+from thenvoi_testing.pagination import (
+    fetch_all_pages,
+    find_item_in_pages,
+    item_exists_in_pages,
+)
+
+# Fetch all items from paginated endpoint
+all_peers = fetch_all_pages(ctx, list_agent_peers)
+
+# Find specific item with predicate
+room = find_item_in_pages(
+    ctx, list_agent_chats,
+    lambda item: item.get("title") == "My Room"
+)
+
+# Check if item exists
+if item_exists_in_pages(ctx, list_agent_chats, room_id):
+    print("Room exists!")
+```
+
 ### Settings
 
 Base settings class for integration tests using Pydantic Settings:
@@ -189,6 +239,27 @@ The package registers as a pytest plugin automatically. Available fixtures:
 | `fake_agent_tools` | Fresh `FakeAgentTools` instance |
 | `mock_websocket` | AsyncMock WebSocket client |
 | `factory` | `MockDataFactory` instance |
+| `mock_agent_api` | MagicMock of agent_api namespace |
+| `mock_human_api` | MagicMock of human_api namespace |
+| `mock_api_client` | AsyncMock with both APIs attached |
+| `api_client` | Real `RestClient` for integration tests (requires `rest` extra) |
+| `sample_room_message` | `MessageCreatedPayload` from a user |
+| `sample_agent_message` | `MessageCreatedPayload` from an agent |
+
+### Integration Testing with api_client
+
+The `api_client` fixture provides a real REST client for integration tests:
+
+```python
+def test_integration(api_client):
+    if api_client is None:
+        pytest.skip("THENVOI_API_KEY not configured")
+
+    response = api_client.agent_api.get_agent_me()
+    assert response.data.id is not None
+```
+
+It uses `ThenvoiTestSettings` to load configuration from environment variables.
 
 ## Development
 
