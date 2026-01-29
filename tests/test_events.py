@@ -106,6 +106,7 @@ class TestMakeMessageEvent:
     def test_default_values(self) -> None:
         """make_message_event should use sensible defaults."""
         event = make_message_event()
+        assert event.payload is not None
         assert event.room_id == "room-123"
         assert event.payload.id == "msg-123"
         assert event.payload.sender_type == "User"
@@ -119,6 +120,7 @@ class TestMakeMessageEvent:
             sender_id="custom-sender",
             sender_type="Agent",
         )
+        assert event.payload is not None
         assert event.room_id == "custom-room"
         assert event.payload.id == "custom-msg"
         assert event.payload.content == "Custom content"
@@ -132,6 +134,7 @@ class TestMakeMessageEvent:
             status="delivered",
         )
         event = make_message_event(metadata=custom_metadata)
+        assert event.payload is not None
         assert len(event.payload.metadata.mentions) == 1
         assert event.payload.metadata.status == "delivered"
 
@@ -147,6 +150,7 @@ class TestMakeRoomAddedEvent:
     def test_default_values(self) -> None:
         """make_room_added_event should use sensible defaults."""
         event = make_room_added_event()
+        assert event.payload is not None
         assert event.room_id == "room-123"
         assert event.payload.title == "Test Room"
         assert event.payload.status == "active"
@@ -159,6 +163,7 @@ class TestMakeRoomAddedEvent:
             status="pending",
             type="group",
         )
+        assert event.payload is not None
         assert event.room_id == "custom-room"
         assert event.payload.title == "Custom Room"
         assert event.payload.status == "pending"
@@ -168,6 +173,7 @@ class TestMakeRoomAddedEvent:
         """make_room_added_event should accept custom owner."""
         custom_owner = RoomOwner(id="agent-1", name="Bot", type="Agent")
         event = make_room_added_event(owner=custom_owner)
+        assert event.payload is not None
         assert event.payload.owner.id == "agent-1"
         assert event.payload.owner.type == "Agent"
 
@@ -183,6 +189,7 @@ class TestMakeRoomRemovedEvent:
     def test_default_values(self) -> None:
         """make_room_removed_event should use sensible defaults."""
         event = make_room_removed_event()
+        assert event.payload is not None
         assert event.room_id == "room-123"
         assert event.payload.status == "removed"
 
@@ -193,6 +200,7 @@ class TestMakeRoomRemovedEvent:
             title="Custom Room",
             status="archived",
         )
+        assert event.payload is not None
         assert event.room_id == "custom-room"
         assert event.payload.title == "Custom Room"
         assert event.payload.status == "archived"
@@ -209,6 +217,7 @@ class TestMakeParticipantAddedEvent:
     def test_default_values(self) -> None:
         """make_participant_added_event should use sensible defaults."""
         event = make_participant_added_event()
+        assert event.payload is not None
         assert event.room_id == "room-123"
         assert event.payload.name == "Test User"
         assert event.payload.type == "User"
@@ -221,6 +230,7 @@ class TestMakeParticipantAddedEvent:
             name="Bot",
             type="Agent",
         )
+        assert event.payload is not None
         assert event.room_id == "custom-room"
         assert event.payload.id == "agent-123"
         assert event.payload.name == "Bot"
@@ -238,6 +248,7 @@ class TestMakeParticipantRemovedEvent:
     def test_default_values(self) -> None:
         """make_participant_removed_event should use sensible defaults."""
         event = make_participant_removed_event()
+        assert event.payload is not None
         assert event.room_id == "room-123"
         assert event.payload.id == "user-456"
 
@@ -247,5 +258,6 @@ class TestMakeParticipantRemovedEvent:
             room_id="custom-room",
             participant_id="agent-123",
         )
+        assert event.payload is not None
         assert event.room_id == "custom-room"
         assert event.payload.id == "agent-123"
