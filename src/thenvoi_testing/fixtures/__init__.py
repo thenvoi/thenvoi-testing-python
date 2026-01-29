@@ -3,10 +3,19 @@
 This module provides pytest fixtures that are automatically registered
 when thenvoi-testing-python is installed (via pytest plugin entry point).
 
-The fixtures provided are:
+Core fixtures (always available):
 - fake_agent_tools: FakeAgentTools instance for testing adapters
 - mock_websocket: AsyncMock WebSocket client for subscription tests
 - factory: MockDataFactory instance for creating test data
+
+API client fixtures (always available):
+- mock_agent_api: MagicMock of agent_api namespace
+- mock_human_api: MagicMock of human_api namespace
+- mock_api_client: AsyncMock with both APIs attached
+
+Sample message fixtures (require thenvoi-testing-python[rest]):
+- sample_room_message: MessageCreatedPayload from a user
+- sample_agent_message: MessageCreatedPayload from an agent
 
 Usage:
     # Just install the package and fixtures are available
@@ -17,16 +26,34 @@ Usage:
     def test_data_factory(factory):
         agent = factory.agent_me(id="test-123")
         assert agent.id == "test-123"
+
+    async def test_api_calls(mock_api_client, mock_agent_api):
+        mock_agent_api.get_agent_me.return_value = factory.response(...)
+        await some_function(mock_api_client)
+        mock_agent_api.get_agent_me.assert_called_once()
 """
 
 from __future__ import annotations
 
+from typing import Any
 from unittest.mock import AsyncMock
 
 import pytest
 
 from thenvoi_testing.factories import factory as _factory
 from thenvoi_testing.fakes import FakeAgentTools
+
+# Import API client fixtures - they will be auto-registered by pytest
+from thenvoi_testing.fixtures.api_clients import (  # noqa: F401
+    mock_agent_api,
+    mock_api_client,
+    mock_human_api,
+)
+from thenvoi_testing.streaming import (
+    Mention,
+    MessageCreatedPayload,
+    MessageMetadata,
+)
 
 
 @pytest.fixture
@@ -75,7 +102,7 @@ def mock_websocket() -> AsyncMock:
 
 
 @pytest.fixture
-def factory():
+def factory() -> Any:
     """Provide MockDataFactory for creating test objects.
 
     Example:
@@ -85,3 +112,79 @@ def factory():
             response = factory.response(agent)
     """
     return _factory
+
+
+# =============================================================================
+# Sample Message Fixtures
+# =============================================================================
+
+
+@pytest.fixture
+def sample_room_message() -> MessageCreatedPayload:
+    """Standard test message from a user.
+
+    Returns a MessageCreatedPayload representing a user message
+    that mentions "TestBot" (agent-123).
+
+    Properties:
+    - id: "msg-789"
+    - content: "@TestBot hello"
+    - sender_id: "user-456"
+    - sender_type: "User"
+    - chat_room_id: "room-123"
+    - metadata: includes mention of TestBot
+
+    Example:
+        def test_message_handling(sample_room_message):
+            assert sample_room_message.sender_type == "User"
+            assert "TestBot" in sample_room_message.content
+    """
+    return MessageCreatedPayload(
+        id="msg-789",
+        content="@TestBot hello",
+        message_type="text",
+        metadata=MessageMetadata(
+            mentions=[Mention(id="agent-123", username="TestBot")], status="sent"
+        ),
+        sender_id="user-456",
+        sender_type="User",
+        chat_room_id="room-123",
+        inserted_at="test-timestamp",
+        updated_at="test-timestamp",
+    )
+
+
+@pytest.fixture
+def sample_agent_message() -> MessageCreatedPayload:
+    """Message from an agent (for filtering tests).
+
+    Returns a MessageCreatedPayload representing a message sent
+    BY the agent (agent-123). Useful for testing that handlers
+    correctly filter out their own messages.
+
+    Properties:
+    - id: "msg-999"
+    - content: "@TestBot hi"
+    - sender_id: "agent-123"
+    - sender_type: "Agent"
+    - chat_room_id: "room-123"
+
+    Example:
+        def test_ignores_own_messages(sample_agent_message, handler):
+            # Handler should skip messages from itself
+            result = handler.should_process(sample_agent_message)
+            assert result is False
+    """
+    return MessageCreatedPayload(
+        id="msg-999",
+        content="@TestBot hi",
+        message_type="text",
+        metadata=MessageMetadata(
+            mentions=[Mention(id="agent-123", username="TestBot")], status="sent"
+        ),
+        sender_id="agent-123",
+        sender_type="Agent",
+        chat_room_id="room-123",
+        inserted_at="test-timestamp",
+        updated_at="test-timestamp",
+    )
