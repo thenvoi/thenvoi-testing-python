@@ -52,18 +52,19 @@ uv run ruff format .
 ## Installation (for consumers)
 
 ```bash
-# Core package
-uv add "thenvoi-testing-python @ git+https://github.com/thenvoi/thenvoi-testing-python.git"
+# From PyPI
+uv add thenvoi-testing-python
 
 # With specific extras
-uv add "thenvoi-testing-python[websocket] @ git+https://github.com/thenvoi/thenvoi-testing-python.git"
+uv add "thenvoi-testing-python[websocket]"
 
 # Pin to version
-uv add "thenvoi-testing-python @ git+https://github.com/thenvoi/thenvoi-testing-python.git@v0.1.0"
+uv add "thenvoi-testing-python==0.1.1"
 ```
 
 ## Branching & Releases
 
 - **Branch**: `main` only (no `dev` branch)
-- **Versioning**: Git tags (e.g., `v0.1.0`)
-- **Workflow**: Feature branch → PR → squash merge to `main` → tag release
+- **Versioning**: Managed by release-please via conventional commits
+- **Publishing**: Automated PyPI publish via trusted publisher (OIDC)
+- **Workflow**: Feature branch → PR (conventional commit title) → squash merge to `main` → release-please PR → merge → PyPI publish

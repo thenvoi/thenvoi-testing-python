@@ -8,6 +8,7 @@ on:
 permissions:
   contents: write
   pull-requests: write
+  id-token: write
 
 jobs:
   release:
@@ -20,23 +21,61 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Generate GitHub App Token
+        id: app_token_generator
+        uses: ./.github/actions/GithubToken
+        with:
+          app_id: ${{ secrets.APP_ID }}
+          installation_id: ${{ secrets.INSTALLATION_ID }}
+          private_key: ${{ secrets.APP_PRIVATE_KEY }}
+
       - name: Release Please
         uses: googleapis/release-please-action@v4
         id: release
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ steps.app_token_generator.outputs.token }}
           config-file: release-please-config.json
           manifest-file: .release-please-manifest.json
 
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+
+      - name: Get package version
+        id: version
+        run: echo "version=$(python -c "import tomllib; print(tomllib.load(open('pyproject.toml','rb'))['project']['version'])")" >> $GITHUB_OUTPUT
+
+      - name: Check if version exists on PyPI
+        id: check_pypi
+        run: |
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" https://pypi.org/pypi/thenvoi-testing-python/${{ steps.version.outputs.version }}/json)
+          if [ "$STATUS" = "200" ]; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+            echo "Version ${{ steps.version.outputs.version }} already exists on PyPI, skipping publish"
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+            echo "Version ${{ steps.version.outputs.version }} not found on PyPI, will publish"
+          fi
+
+      - name: Install dependencies
+        if: steps.check_pypi.outputs.exists == 'false'
+        run: uv sync --all-groups
+
+      - name: Build package
+        if: steps.check_pypi.outputs.exists == 'false'
+        run: uv build
+
+      - name: Publish to PyPI
+        if: steps.check_pypi.outputs.exists == 'false'
+        run: uv publish
+
       - name: Publish release summary
-        if: steps.release.outputs.release_created == 'true'
+        if: steps.check_pypi.outputs.exists == 'false'
         run: |
           echo "## Release Summary" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Version:** ${{ steps.release.outputs.major }}.${{ steps.release.outputs.minor }}.${{ steps.release.outputs.patch }}" >> $GITHUB_STEP_SUMMARY
-          echo "**Tag:** ${{ steps.release.outputs.tag_name }}" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "Install with:" >> $GITHUB_STEP_SUMMARY
-          echo "\`\`\`bash" >> $GITHUB_STEP_SUMMARY
-          echo "uv add \"thenvoi-testing-python @ git+https://github.com/thenvoi/thenvoi-testing-python.git@${{ steps.release.outputs.tag_name }}\"" >> $GITHUB_STEP_SUMMARY
-          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          echo "**Version:** ${{ steps.version.outputs.version }}" >> $GITHUB_STEP_SUMMARY
