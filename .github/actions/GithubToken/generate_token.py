@@ -1,8 +1,8 @@
-import jwt
-import time
-import requests
 import os
+import time
 
+import jwt
+import requests
 
 app_id = os.getenv("github_app_id")
 installation_id = os.getenv("github_app_installation_id")
@@ -23,7 +23,7 @@ payload = {
 try:
     jwt_token = jwt.encode(payload, private_key, algorithm="RS256")
 except Exception as e:
-    raise ValueError(f"Error encoding JWT: {e}")
+    raise ValueError(f"Error encoding JWT: {e}") from e
 
 headers = {
     "Authorization": f"Bearer {jwt_token}",
@@ -37,9 +37,9 @@ try:
     response = requests.post(url, headers=headers)
     response.raise_for_status()  # Raise an error for bad status codes
 except requests.exceptions.HTTPError as http_err:
-    raise SystemExit(f"HTTP error occurred: {http_err}")  # Handle specific HTTP error
+    raise SystemExit(f"HTTP error occurred: {http_err}") from http_err
 except Exception as err:
-    raise SystemExit(f"Other error occurred: {err}")  # Handle other errors
+    raise SystemExit(f"Other error occurred: {err}") from err
 
 # Extract and print the access token
 installation_access_token = response.json().get("token")
