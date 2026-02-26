@@ -43,6 +43,9 @@ jobs:
     needs: release
     runs-on: ubuntu-latest
     if: needs.release.outputs.release_created == 'true'
+    environment:
+      name: pypi
+      url: https://pypi.org/p/thenvoi-testing-python
 
     steps:
       - name: Checkout repository
