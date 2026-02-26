@@ -32,7 +32,10 @@ runs:
     - name: Generate token
       id: generate_token_script
       shell: bash
-      run: echo "token=$(python ${{ github.action_path }}/generate_token.py)" >> $GITHUB_OUTPUT
+      run: |
+        TOKEN=$(python ${{ github.action_path }}/generate_token.py)
+        echo "::add-mask::$TOKEN"
+        echo "token=$TOKEN" >> $GITHUB_OUTPUT
       env:
         github_app_id: ${{ inputs.app_id }}
         github_app_installation_id: ${{ inputs.installation_id }}

@@ -14,6 +14,8 @@ jobs:
   release:
     runs-on: ubuntu-latest
     concurrency: release
+    outputs:
+      release_created: ${{ steps.release.outputs.release_created }}
 
     steps:
       - name: Checkout repository
@@ -36,6 +38,15 @@ jobs:
           token: ${{ steps.app_token_generator.outputs.token }}
           config-file: release-please-config.json
           manifest-file: .release-please-manifest.json
+
+  publish:
+    needs: release
+    runs-on: ubuntu-latest
+    if: needs.release.outputs.release_created == 'true'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
 
       - name: Set up Python
         uses: actions/setup-python@v6
@@ -60,10 +71,6 @@ jobs:
             echo "exists=false" >> $GITHUB_OUTPUT
             echo "Version ${{ steps.version.outputs.version }} not found on PyPI, will publish"
           fi
-
-      - name: Install dependencies
-        if: steps.check_pypi.outputs.exists == 'false'
-        run: uv sync --all-groups
 
       - name: Build package
         if: steps.check_pypi.outputs.exists == 'false'
