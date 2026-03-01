@@ -30,7 +30,7 @@ from thenvoi_testing.pagination import (
     item_exists_in_pages,
 )
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 
 __all__ = [
     "fetch_all_pages",

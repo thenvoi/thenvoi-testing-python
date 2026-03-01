@@ -8,10 +8,12 @@ on:
 permissions:
   contents: write
   pull-requests: write
+  id-token: write
 
 jobs:
   release:
     runs-on: ubuntu-latest
+    environment: release
     concurrency: release
 
     steps:
@@ -20,13 +22,43 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Generate GitHub App Token
+        id: app_token_generator
+        uses: ./.github/actions/GithubToken
+        with:
+          app_id: ${{ secrets.APP_ID }}
+          installation_id: ${{ secrets.INSTALLATION_ID }}
+          private_key: ${{ secrets.APP_PRIVATE_KEY }}
+
       - name: Release Please
         uses: googleapis/release-please-action@v4
         id: release
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ steps.app_token_generator.outputs.token }}
           config-file: release-please-config.json
           manifest-file: .release-please-manifest.json
+
+      - name: Set up Python
+        if: steps.release.outputs.release_created == 'true'
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+
+      - name: Install uv
+        if: steps.release.outputs.release_created == 'true'
+        uses: astral-sh/setup-uv@v7
+
+      - name: Install dependencies
+        if: steps.release.outputs.release_created == 'true'
+        run: uv sync --all-groups
+
+      - name: Build package
+        if: steps.release.outputs.release_created == 'true'
+        run: uv build
+
+      - name: Publish to PyPI
+        if: steps.release.outputs.release_created == 'true'
+        uses: pypa/gh-action-pypi-publish@release/v1
 
       - name: Publish release summary
         if: steps.release.outputs.release_created == 'true'
@@ -35,8 +67,3 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Version:** ${{ steps.release.outputs.major }}.${{ steps.release.outputs.minor }}.${{ steps.release.outputs.patch }}" >> $GITHUB_STEP_SUMMARY
           echo "**Tag:** ${{ steps.release.outputs.tag_name }}" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "Install with:" >> $GITHUB_STEP_SUMMARY
-          echo "\`\`\`bash" >> $GITHUB_STEP_SUMMARY
-          echo "uv add \"thenvoi-testing-python @ git+https://github.com/thenvoi/thenvoi-testing-python.git@${{ steps.release.outputs.tag_name }}\"" >> $GITHUB_STEP_SUMMARY
-          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
