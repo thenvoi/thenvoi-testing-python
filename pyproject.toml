@@ -24,7 +24,7 @@ dependencies = [
 
 [project.optional-dependencies]
 # For repos using thenvoi_rest client (integration tests)
-rest = ["thenvoi-client-rest==0.0.4"]
+rest = ["thenvoi-client-rest==0.0.7"]
 # For repos using WebSocket testing
 websocket = ["websockets>=12.0"]
 # Full installation
