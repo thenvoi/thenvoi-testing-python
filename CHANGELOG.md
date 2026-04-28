@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.1.4](https://github.com/thenvoi/thenvoi-testing-python/compare/thenvoi-testing-python-v0.1.3...thenvoi-testing-python-v0.1.4) (2026-04-28)
+
+
+### Bug Fixes
+
+* **deps-dev:** Bump thenvoi-client-rest from 0.0.4 to 0.0.7 ([#13](https://github.com/thenvoi/thenvoi-testing-python/issues/13)) ([6387683](https://github.com/thenvoi/thenvoi-testing-python/commit/63876834051819a2a7e9ec7d4fd07afd6e27e3f2))
+* **deps:** Bump cryptography in /.github/actions/GithubToken ([#15](https://github.com/thenvoi/thenvoi-testing-python/issues/15)) ([e1deec6](https://github.com/thenvoi/thenvoi-testing-python/commit/e1deec67ca063ebdcf4f097fdcaf7f7bcf605535))
+
+
+### Continuous Integration
+
+* **deps:** Bump googleapis/release-please-action from 4 to 5 ([#14](https://github.com/thenvoi/thenvoi-testing-python/issues/14)) ([e42f6aa](https://github.com/thenvoi/thenvoi-testing-python/commit/e42f6aa0c26fe84c465058fd5422659167168317))
+
 ## [0.1.3](https://github.com/thenvoi/thenvoi-testing-python/compare/thenvoi-testing-python-v0.1.2...thenvoi-testing-python-v0.1.3) (2026-04-12)
 
 
